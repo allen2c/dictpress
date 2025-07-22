@@ -42,18 +42,33 @@ def merge(data: dict, update: dict) -> dict:
 
 
 def get_deep(
-    data: dict, key: str, default: typing.Any | None = None
+    data: dict,
+    key: str,
+    default: typing.Any | None = None,
+    *,
+    case_sensitive: bool = True,
 ) -> typing.Any | None:
     """
     Get a value from nested dictionary using dot notation or suffix matching.
     Searches for exact key match or keys ending with '.{key}'.
     Returns the found value or default if not found.
     """
-    for k, v in flatten_dict(data).items():
+    flattened = flatten_dict(data)
+
+    for k, v in flattened.items():
         if k == key:
             return v
         if k.endswith(f".{key}"):
             return v
+
+    if not case_sensitive:
+        for k, v in flattened.items():
+            key_lower = key.lower()
+            k_lower = k.lower()
+            if k_lower == key_lower:
+                return v
+            if k_lower.endswith(f".{key_lower}"):
+                return v
     return default
 
 

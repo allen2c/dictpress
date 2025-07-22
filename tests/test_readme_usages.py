@@ -43,6 +43,29 @@ def test_get_deep_example():
     assert missing == "default"
 
 
+def test_get_deep_case_sensitive():
+    """Test the case_sensitive parameter in get_deep."""
+    data = {"User": {"Profile": {"Name": "Alice", "AGE": 30}}}
+
+    # Case-sensitive (default) - should not find lowercase keys
+    assert get_deep(data, "name") is None
+    assert get_deep(data, "age") is None
+    assert get_deep(data, "user.profile.name") is None
+
+    # Case-sensitive (explicit) - should not find lowercase keys
+    assert get_deep(data, "name", case_sensitive=True) is None
+    assert get_deep(data, "age", case_sensitive=True) is None
+
+    # Case-insensitive - should find keys regardless of case
+    assert get_deep(data, "name", case_sensitive=False) == "Alice"
+    assert get_deep(data, "age", case_sensitive=False) == 30
+    assert get_deep(data, "user.profile.name", case_sensitive=False) == "Alice"
+
+    # Exact case matches should work in both modes
+    assert get_deep(data, "Name") == "Alice"
+    assert get_deep(data, "Name", case_sensitive=False) == "Alice"
+
+
 def test_set_deep_example():
     """Test the set_deep example from README."""
     data = {"a": 1}
