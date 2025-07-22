@@ -2,6 +2,9 @@
 
 Simple dictionary manipulation utilities for Python.
 
+**Repository:** <https://github.com/allen2c/dictpress>
+**PyPI:** <https://pypi.org/project/dictpress/>
+
 ## Installation
 
 ```bash
