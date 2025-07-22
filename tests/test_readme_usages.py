@@ -1,4 +1,4 @@
-from dictpress import flatten_dict, merge, unflatten_dict
+from dictpress import flatten_dict, get_deep, merge, set_deep, unflatten_dict
 
 
 def test_flatten_dict_example():
@@ -26,6 +26,34 @@ def test_merge_example():
     assert merged == expected
 
 
+def test_get_deep_example():
+    """Test the get_deep examples from README."""
+    data = {"user": {"profile": {"name": "Alice", "age": 30}}}
+
+    # Suffix match
+    name = get_deep(data, "name")
+    assert name == "Alice"
+
+    # Exact match
+    age = get_deep(data, "user.profile.age")
+    assert age == 30
+
+    # Default value
+    missing = get_deep(data, "missing", "default")
+    assert missing == "default"
+
+
+def test_set_deep_example():
+    """Test the set_deep example from README."""
+    data = {"a": 1}
+    result = set_deep(data, "user.name", "Bob")
+    expected = {"a": 1, "user": {"name": "Bob"}}
+    assert result == expected
+
+    # Original data unchanged
+    assert data == {"a": 1}
+
+
 def test_round_trip():
     """Test that flatten -> unflatten preserves original structure."""
     original = {"a": {"b": {"c": 1}}, "x": 2}
@@ -49,3 +77,24 @@ def test_empty_dicts():
     assert unflatten_dict({}) == {}
     assert merge({}, {"a": 1}) == {"a": 1}
     assert merge({"a": 1}, {}) == {"a": 1}
+
+
+def test_get_deep_edge_cases():
+    """Test get_deep edge cases."""
+    data = {"a": {"b": {"c": 1}}}
+
+    # Non-existent key returns None by default
+    assert get_deep(data, "missing") is None
+
+    # Multiple suffix matches - returns first found
+    data_multi = {"x": {"name": "first"}, "y": {"name": "second"}}
+    result = get_deep(data_multi, "name")
+    assert result in ["first", "second"]  # Either is valid
+
+
+def test_set_deep_nested():
+    """Test set_deep with deeply nested paths."""
+    data = {}
+    result = set_deep(data, "a.b.c.d", "deep")
+    expected = {"a": {"b": {"c": {"d": "deep"}}}}
+    assert result == expected
