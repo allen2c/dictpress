@@ -1,3 +1,4 @@
+import pytest
 from dictpress import flatten_dict, get_deep, merge, set_deep, unflatten_dict
 
 
@@ -121,3 +122,26 @@ def test_set_deep_nested():
     result = set_deep(data, "a.b.c.d", "deep")
     expected = {"a": {"b": {"c": {"d": "deep"}}}}
     assert result == expected
+
+
+def test_set_deep_overwrite():
+    """Test that set_deep overwrites existing values."""
+    data = {"a": {"b": 1}}
+    result = set_deep(data, "a.b", 2)
+    expected = {"a": {"b": 2}}
+    assert result == expected
+
+def test_flatten_dict_non_string_key():
+    """Test that flatten_dict preserves non-string keys."""
+    data = {"a": {"b": 1}, 123: "value", "c": {"d": 4, 456: "value2"}}
+    flattened = flatten_dict(data)
+    expected = {"a.b": 1, 123: "value", "c": {"d": 4, 456: "value2"}}
+    assert flattened == expected
+
+
+def test_round_trip_with_non_string_keys():
+    """Test that flatten -> unflatten preserves non-string keys."""
+    original = {"a": {"b": 1}, 123: "value", "c": {"d": 4, 456: "value2"}}
+    flattened = flatten_dict(original)
+    restored = unflatten_dict(flattened)
+    assert restored == original
