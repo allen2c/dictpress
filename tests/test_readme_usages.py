@@ -1,4 +1,3 @@
-import pytest
 from dictpress import flatten_dict, get_deep, merge, set_deep, unflatten_dict
 
 
@@ -130,6 +129,7 @@ def test_set_deep_overwrite():
     result = set_deep(data, "a.b", 2)
     expected = {"a": {"b": 2}}
     assert result == expected
+
 
 def test_flatten_dict_non_string_key():
     """Test that flatten_dict preserves non-string keys."""

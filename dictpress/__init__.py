@@ -15,7 +15,11 @@ def flatten_dict(data: dict, *, parent_key: str = "", sep: str = ".") -> dict:
     for k, v in data.items():
         if isinstance(k, str):
             new_key = parent_key + sep + k if parent_key else k
-            if isinstance(v, dict) and v and all(isinstance(sk, str) for sk in v.keys()):
+            if (
+                isinstance(v, dict)
+                and v
+                and all(isinstance(sk, str) for sk in v.keys())
+            ):
                 items.update(flatten_dict(v, parent_key=new_key, sep=sep))
             else:
                 items[new_key] = v
